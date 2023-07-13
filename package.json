@@ -1,0 +1,24 @@
+{
+  "name": "webpack-base-hmr",
+  "version": "1.0.0",
+  "description": "1、dist目录下的文件打包的是什么啊",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Keanuuuuuu/webpack-base-HMR.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Keanuuuuuu/webpack-base-HMR/issues"
+  },
+  "homepage": "https://github.com/Keanuuuuuu/webpack-base-HMR#readme",
+  "devDependencies": {
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4"
+  }
+}
