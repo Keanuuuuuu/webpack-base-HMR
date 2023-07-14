@@ -4,9 +4,9 @@ const path = require('path')
 // const MemoryFS = require('memory-fs') // 基于内存
 const fs = require('fs-extra') // 基于硬盘文件系统
 fs.join = path.join
-const mime = require('mime') // 从文件中拿到类型
+const mime = require('mime') // 这个模块可以从文件中拿到类型
 const socketIo = require('socket.io') // 创建socket服务
-const updateCompiler = require('../utils/updateCompiler') // 源码也是这样写的
+const updateCompiler = require('./utils/updateCompiler') // 源码也是这样写的
 
 class Server {
   constructor(compiler) {
@@ -27,6 +27,7 @@ class Server {
     // 服务器要监听客户端的连接，当客户端连接上来后，socket代表跟这个客户端连接对象
     io.on('connection', (socket) => {
       console.info('一个新的客户端已经连接上了')
+      // 每当链接上一个新的客户端，发送当前的hash值
       this.clientsocketList.push(socket) // 把新的socket方到数组
       socket.emit('hash', this.currentHsah) // 给客户端发送最新hash
       socket.emit('ok') // 给客户端发送ok
@@ -46,6 +47,7 @@ class Server {
     let {compiler} = this
     let config = compiler.options
     this.app.use(this.middleware(config.output.path))
+    // 这里拿到的是dist目录路径
   }
   // 创建webpack-dev-middleware
   setupDevMiddleware() {
@@ -60,6 +62,7 @@ class Server {
     // let fs = new MemoryFS() // 内存文件系统实例
     // 打包后文件写入内存文件系统，读的时候也从内存文件系统里读
     this.fs = compiler.outputFileSystem = fs
+    // 这里将fs作为compiler.outputFileSystem的值，说明，我通过设置把webpack的打包结果放在磁盘里，最后再赋值给this.fs以供后续操作
     console.info(9)
     // 返回一个中间件，用来响应客户端对于产出文件的请求
     return (staticDir) => { // 静态文件根目录，它其实就是输出目录 dist目录
@@ -72,20 +75,23 @@ class Server {
         // 得到要访问的静态路径 /index.html /main.js
         let filePath = path.join(staticDir, url)
         console.info('filePath', filePath) 
-        // /Users/ljc/Documents/code/student/webpack-HMR/02_MyHMR/dist/index.html
+        // 这里拿到的是绝对路径，就是下面这个样子的路径
+        // D:\前端工程化\webpack-base-HMR\dist\index.html
         try {
           // 返回此路径上的文件的描述对象，如果此文件不存在会抛异常
           let statObj = this.fs.statSync(filePath)
           console.info('statObj', statObj)
           if (statObj.isFile()) {
-            let content = this.fs.readFileSync(filePath) // 读取文件内容
+            let content = this.fs.readFileSync(filePath) // 读取文件内容，如果这里两个返回值类型函数用到的不是箭头函数，那么this的指向将出现问题，将拿不到刚刚打包好存入的文件
             res.setHeader('Content-Type', mime.getType(filePath)) // 设置响应头，告诉浏览器文件内容格式
             res.send(content) // 把内容发送给浏览器
           } else {
+            console.log(111);
             return res.sendStatus(404)
           }
         } catch(error) {
-          return res.sendStatus(404)
+            console.log(error);
+            return res.sendStatus(404)
         }
       }
     }
