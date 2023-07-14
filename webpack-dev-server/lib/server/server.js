@@ -37,6 +37,11 @@ class Server {
       })
     })
   }
+  // 创建http服务器
+  createServer() {
+    // 通过http模块创建一个普通的http服务器
+    this.server = http.createServer(this.app)
+  }
   routes() {
     let {compiler} = this
     let config = compiler.options
@@ -58,7 +63,7 @@ class Server {
     console.info(9)
     // 返回一个中间件，用来响应客户端对于产出文件的请求
     return (staticDir) => { // 静态文件根目录，它其实就是输出目录 dist目录
-      return (req, res, next) => {
+      return (req, res, next) => { // 这个函数是实际的中间件函数，用于处理客户端对静态资源文件的请求
         let {url} = req; // 得到请求路径
         if(url === '/favicon.ico') {
           return res.sendStatus(404)
@@ -102,11 +107,6 @@ class Server {
   // 创建express的app实例
   setupApp() {
     this.app = express() // 得到http应用对象
-  }
-  // 创建http服务器
-  createServer() {
-    // 通过http模块创建一个普通的http服务器
-    this.server = http.createServer(this.app)
   }
   // 监听服务
   listen(port, host, callback) {
