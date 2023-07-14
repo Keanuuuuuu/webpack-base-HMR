@@ -6,13 +6,13 @@ const fs = require('fs-extra') // 基于硬盘文件系统
 fs.join = path.join
 const mime = require('mime') // 从文件中拿到类型
 const socketIo = require('socket.io') // 创建socket服务
-const updateCompiler = require('../utils/updateCompiler') // 源码中也是这样引入
+const updateCompiler = require('../utils/updateCompiler') // 源码也是这样写的
 
 class Server {
   constructor(compiler) {
     this.compiler = compiler // 保存编译器对象
     updateCompiler(compiler) // 入口注入2个文件
-    this.setupApp() // 创建express框架的app实例
+    this.setupApp() // 创建express
     this.currentHsah // 当前的hash值，每次编译都会产生一个hash值
     this.clientsocketList = [] // 存放着所有通过websocket链接到服务器的客户端
     this.setupHooks() // 建立钩子
