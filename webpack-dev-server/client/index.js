@@ -1,5 +1,5 @@
 // 1.连接websocket服务器
-// /socket.io/socket.io.js window.io赋值
+// /socket.io/socket.io.js 这个文件可以给window.io赋值，通过它链接socket服务器
 let currentHash
 class EventEmitter {
   constructor() {

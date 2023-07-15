@@ -1,4 +1,19 @@
-(function (modules) {
+let currentHash // 当前hash
+let lastHash // 上一个hash
+class EventEmitter {
+  constructor() {
+    this.events = {}
+  }
+  on(eventName, fn) {
+    this.events[eventName] = fn
+  }
+  emit(eventName, ...args) {
+    this.events[eventName](...args)
+  }
+}
+let hotEmitter = new EventEmitter()
+
+;(function (modules) {
 
 var installedModules = {} // 存放模块缓存
 
@@ -34,6 +49,10 @@ return __webpack_require__("./src/index.js")
 	{
 		// 按照打包后的代码中，传入两个参数
 		"./src/index.js":function(module, exports, __webpack_require__){
+			// 监听webpackHotUpdate消息
+			__webpack_require__('webpack/hot/dev-server.js')
+			// 连接websock服务器，如果服务器发给我hash就保存在currentHash里，如果服务器发送ok，我就发射webpackHotUpdate事件
+			__webpack_require__('webpack-dev-server/client/index.js')
 			let input = document.createElement('input')
 			document.body.append(input)
 
@@ -55,6 +74,42 @@ return __webpack_require__("./src/index.js")
 
 		"./src/title.js":function(module, exports, __webpack_require__){
 			module.exports = 'title1'
+		},
+
+
+		"webpack-dev-server/client/index.js": function(module, exports) {
+
+			// 刚才的消息订阅与发布类正好放到上面大家共享
+
+			// 1连接websocket服务器
+			const socket = window.io('/')
+			// 2监听hash事件，保存此hash值
+			socket.on('hash', (hash) => {
+				currentHash = hash
+			})
+			// 3监听ok
+			socket.on('ok', () => {
+				console.info('ok')
+				reloadApp()
+			})
+			// 4发射webpackHotUpdate事件
+			function reloadApp() {
+				hotEmitter.emit('webpackHotUpdate')
+			}
+		},
+		"webpack/hot/dev-server.js": function(module, exports) {
+			// 5监听webpackHotUpdate事件
+			hotEmitter.on('webpackHotUpdate', () => {
+				console.info('hotCheck')
+				if(!lastHash) { // 没有lastHash说明没上一次的编译结果，说明就是第一次渲染
+					lastHash = currentHash
+					console.log('lashHash',lastHash, 'currentHash', currentHash)
+					return
+				}
+				console.log('lashHash',lastHash, 'currentHash', currentHash)
+				// 6hotCheck
+				// module.hot.check()
+			})
 		}
 	}
 )
