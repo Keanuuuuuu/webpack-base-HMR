@@ -63,7 +63,7 @@ class Server {
     // 打包后文件写入内存文件系统，读的时候也从内存文件系统里读
     this.fs = compiler.outputFileSystem = fs
     // 这里将fs作为compiler.outputFileSystem的值，说明，我通过设置把webpack的打包结果放在磁盘里，最后再赋值给this.fs以供后续操作
-    console.info(9)
+
     // 返回一个中间件，用来响应客户端对于产出文件的请求
     return (staticDir) => { // 静态文件根目录，它其实就是输出目录 dist目录
       return (req, res, next) => { // 这个函数是实际的中间件函数，用于处理客户端对静态资源文件的请求
