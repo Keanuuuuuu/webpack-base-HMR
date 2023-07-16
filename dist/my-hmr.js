@@ -17,11 +17,35 @@ let hotEmitter = new EventEmitter()
 
 var installedModules = {} // 存放模块缓存
 
+// 第二步：维护模块间的父子关系
+// parentModuleId为父模块的名称
+function hotCreaterequire(parentModuleId){
+
+	// 要想在下面的函数中通过传入子模块从而给他绑定父模块,就要根据传入的ID拿到 这次 要绑定的附魔看
+	let parentModule = installedModules[parentModuleId]
+	// 而且在父模块调用hotCreaterequire，说明父模块一定被加载过了
+	if(!parentModule) return __webpack_require__
+
+	let fn = function(childModuleId) {
+		// 这里为什么说传入的moduleId标记为子模块parentModuleId，因为只有父模块和最初的这个JS才会调用__webpack_require__方法啊，所以其引用的都是子模块Id
+		parentModule.children.push(childModuleId)
+		__webpack_require__(childModuleId)
+		let childModule = installedModules[childModuleId]
+		childModule.parents.push(parentModuleId)
+		console.log("childModule",childModule);
+		console.log("parentModule",parentModule);
+		return childModule.exports
+	}
+
+	return fn
+	// 这个返回的函数就相当于包装后的__webpack_require__方法，包装的内容为维护父子关系
+}
+
 // 第一步：实现在浏览器里正确渲染内容，也就是传入的JS代码能跑
 // 方法是实现一个require方法，因为浏览器不认识commonJS的引入方法，我们再在外面封装一层
 function __webpack_require__(moduleId){
 	// 按照commonJS加载模块的逻辑在webpack里实现一个浏览器能看懂的
-	// 1、commonJS是有缓存功能的：定义installedModules
+	// commonJS是有缓存功能的：所以定义installedModules
 	if(installedModules[moduleId]){
 		// 如果之前加载过这个模块。那么install里记录的一定有这个模块，那么我们直接返回即可
 		return installedModules[moduleId]
@@ -29,10 +53,12 @@ function __webpack_require__(moduleId){
 	let module = installedModules[moduleId] = {
 		i:moduleId,
 		l:false,
-		exports:{}
+		exports:{},
 		// 如果install里没有加载过此模块，那么我们定义一个module，其id为传进来的id，loaded（l）设为false，那么它导出的模块也是为空
+		parents:[],
+		children:[]
 	}
-	modules[moduleId].call(module.exports,module,module.exports,__webpack_require__)
+	modules[moduleId].call(module.exports,module,module.exports,hotCreaterequire(moduleId))
 	// modules[moduleId]，modules是传入的那个对象，里面有两键值对，这样的写法就是拿到对应模块名称的后面那个函数，使用call可以执行这个函数
 	/* call第一个参数为this指针；
 		 第二个参数为module，是我们自己定义的module；
@@ -43,7 +69,8 @@ function __webpack_require__(moduleId){
 	return module.exports
 }
 
-return __webpack_require__("./src/index.js")
+// return __webpack_require__("./src/index.js")
+return hotCreaterequire("./src/index.js")("./src/index.js")
 
 })(
 	{
