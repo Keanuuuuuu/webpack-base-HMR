@@ -16,6 +16,91 @@ let hotEmitter = new EventEmitter()
 ;(function (modules) {
 
 var installedModules = {} // 存放模块缓存
+let hotUpdate = {}
+
+// 第九步：hotApply
+function hotApply() {
+	for(let moduleId in hotUpdate) { // ./src/title.js
+		let oldModule = installedModules[moduleId] // 老title.js模块
+		delete installedModules[moduleId] // 12从缓存中删除旧模块
+		// 循环它所依赖的父模块
+		
+		oldModule.parents.forEach(parentModule => {
+			// 取出父模块上的回调，如果有就执行
+			console.log("oldModule",parentModule.hot);
+			let cb = parentModule.hot._acceptedDependencies[moduleId]
+			console.log(cb);
+			// 13执行回调
+			cb && cb()
+		})
+	}
+}
+
+// 第七步：定制函数调用需要的函数
+window.webpackHotUpdatewebpack_base_hmr = function(chunkId, moreModules) {
+	hotAddUpdateChunk(chunkId, moreModules)
+}
+
+// 第八步：hotAddUpdateChunk
+function hotAddUpdateChunk(chunkId, moreModules) {
+	for(let moduleId in moreModules) {
+		modules[moduleId] = hotUpdate[moduleId] = moreModules[moduleId]
+		// modules是本身这个立即执行函数的参数，也就是下面那些很多的键值对，现在呢我们通过拿到的chunk里的最新代码
+		// 替换其本身的模块的代码，实现更新
+	}
+	hotApply()
+}
+
+// 第六步：采用JSONP方式加载chunk文件
+function hotDownloadUpdateChunk(chunkId) {
+	let script = document.createElement('script')
+	script.src = `main.${lastHash}.hot-update.js`
+	document.head.appendChild(script)
+	lastHash = currentHash
+}
+
+// 第五步：下载代码更改描述文件
+function hotDownloadManifest() {
+	return new Promise(function(resolve, reject) {
+		let xhr = new XMLHttpRequest()
+		let url = `main.${lastHash}.hot-update.json`
+		xhr.open('get', url)
+		xhr.responseType = 'json'
+		xhr.onload = function() {
+			resolve(xhr.response)
+			console.log(xhr.response);
+		}
+		xhr.send()
+	})
+}
+
+// 第四步：定义check方法
+function hotCheck(){
+	// hotCheck不是这个模块的内置方法，可以放到外面公用
+	// {"c":["main"],"r":[],"m":[]}
+	hotDownloadManifest().then(update => {
+		let chunkIds = Object.keys(update.c) // ["main"]
+		chunkIds.forEach(chunkId => {
+			// 调用hotDownloadUpdateChunk
+			hotDownloadUpdateChunk(chunkId) // main
+		})
+	}).catch((err) => {
+		console.log(err);
+	})
+}
+// 第三步：补充accept和check方法
+function hotCreateModule(){
+	let hot = {
+		_acceptedDependencies : {},
+		accept (deps, callback) {
+			deps.forEach(dep => {
+				hot._acceptedDependencies[dep] = callback
+			});
+		},
+		check:hotCheck
+	}
+	return hot
+}
 
 // 第二步：维护模块间的父子关系
 // parentModuleId为父模块的名称
@@ -28,10 +113,10 @@ function hotCreaterequire(parentModuleId){
 
 	let fn = function(childModuleId) {
 		// 这里为什么说传入的moduleId标记为子模块parentModuleId，因为只有父模块和最初的这个JS才会调用__webpack_require__方法啊，所以其引用的都是子模块Id
-		parentModule.children.push(childModuleId)
 		__webpack_require__(childModuleId)
 		let childModule = installedModules[childModuleId]
-		childModule.parents.push(parentModuleId)
+		parentModule.children.push(childModule)
+		childModule.parents.push(parentModule)
 		console.log("childModule",childModule);
 		console.log("parentModule",parentModule);
 		return childModule.exports
@@ -56,7 +141,8 @@ function __webpack_require__(moduleId){
 		exports:{},
 		// 如果install里没有加载过此模块，那么我们定义一个module，其id为传进来的id，loaded（l）设为false，那么它导出的模块也是为空
 		parents:[],
-		children:[]
+		children:[],
+		hot:hotCreateModule()
 	}
 	modules[moduleId].call(module.exports,module,module.exports,hotCreaterequire(moduleId))
 	// modules[moduleId]，modules是传入的那个对象，里面有两键值对，这样的写法就是拿到对应模块名称的后面那个函数，使用call可以执行这个函数
@@ -95,12 +181,12 @@ return hotCreaterequire("./src/index.js")("./src/index.js")
 			// 如果当前模块支持热更新
 			if(module.hot) {
 				// 注册回调 当前index.js模块可以接受title.js模块的更新，当title.js变更后重新调用render方法
-				module.hot.accept(['./title.js'], render)
+				module.hot.accept(['./src/title.js'], render)
 			}
 		},
 
 		"./src/title.js":function(module, exports, __webpack_require__){
-			module.exports = 'title1'
+			module.exports = 'title121'
 		},
 
 
@@ -131,11 +217,12 @@ return hotCreaterequire("./src/index.js")("./src/index.js")
 				if(!lastHash) { // 没有lastHash说明没上一次的编译结果，说明就是第一次渲染
 					lastHash = currentHash
 					console.log('lashHash',lastHash, 'currentHash', currentHash)
+					// 第一次渲染是不需要热替换的，直接返回
 					return
 				}
 				console.log('lashHash',lastHash, 'currentHash', currentHash)
-				// 6hotCheck
-				// module.hot.check()
+				// 6hotCheck，走到这说明不是第一次渲染，我要向服务器发送check请求，拉去最新模块代码
+				module.hot.check()
 			})
 		}
 	}

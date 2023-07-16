@@ -7,17 +7,23 @@
  * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
  */
 self["webpackHotUpdatewebpack_base_hmr"]("main",{
-    "./src/title.js":
-    ((module) => {
-      val("module.exports = 'title111'\n\n//# sourceURL=webpack://webpack-base-hmr/./src/title.js?");
-    })
+
+/***/ "./src/title.js":
+/*!**********************!*\
+  !*** ./src/title.js ***!
+  \**********************/
+/***/ ((module) => {
+
+eval("module.exports = 'title212'\n\n//# sourceURL=webpack://webpack-base-hmr/./src/title.js?");
+
+/***/ })
 
 },
- function(__webpack_require__) { // webpackRuntimeModules
- /* webpack/runtime/getFullHash */
- (() => {
- 	__webpack_require__.h = () => ("c7ce09c4294b7702899a")
- })();
- 
- }
+/******/ function(__webpack_require__) { // webpackRuntimeModules
+/******/ /* webpack/runtime/getFullHash */
+/******/ (() => {
+/******/ 	__webpack_require__.h = () => ("eb64fc87a996605fff59")
+/******/ })();
+/******/ 
+/******/ }
 );
