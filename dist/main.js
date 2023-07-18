@@ -25,7 +25,7 @@ eval("let input = document.createElement('input')\r\ndocument.body.append(input)
   \**********************/
 /***/ ((module) => {
 
-eval("module.exports = 'title21223'\n\n//# sourceURL=webpack://webpack-base-hmr/./src/title.js?");
+eval("module.exports = 'HMR1'\n\n//# sourceURL=webpack://webpack-base-hmr/./src/title.js?");
 
 /***/ })
 
@@ -90,7 +90,7 @@ eval("module.exports = 'title21223'\n\n//# sourceURL=webpack://webpack-base-hmr/
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("896fdf082db60a124f6c")
+/******/ 		__webpack_require__.h = () => ("1e2a4b0b2c5fa3559edb")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
