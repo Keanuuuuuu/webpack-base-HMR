@@ -207,12 +207,12 @@ return hotCreaterequire("./src/index.js")("./src/index.js")
 			})
 			// 4发射webpackHotUpdate事件
 			function reloadApp() {
-				hotEmitter.emit('webpackHotUpdate')
+				hotEmitter.emit('webpackHotUpdatewebpack_base_hmr')
 			}
 		},
 		"webpack/hot/dev-server.js": function(module, exports) {
 			// 5监听webpackHotUpdate事件
-			hotEmitter.on('webpackHotUpdate', () => {
+			hotEmitter.on('webpackHotUpdatewebpack_base_hmr', () => {
 				console.info('hotCheck')
 				if(!lastHash) { // 没有lastHash说明没上一次的编译结果，说明就是第一次渲染
 					lastHash = currentHash
