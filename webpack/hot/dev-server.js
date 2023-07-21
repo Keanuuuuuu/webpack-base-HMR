@@ -12,6 +12,5 @@ hotEmitter.on('webpackHotUpdatewebpack_base_hmr', () => {
     return
   }
   console.log('lashHash',lastHash, 'currentHash', currentHash)
-  // hotCheck，走到这说明不是第一次渲染，我要向服务器发送check请求，拉去最新模块代码
   module.hot.check()
 })
