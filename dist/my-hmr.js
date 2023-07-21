@@ -123,7 +123,6 @@ function hotCreaterequire(parentModuleId){
 	}
 
 	return fn
-	// 这个返回的函数就相当于包装后的__webpack_require__方法，包装的内容为维护父子关系
 }
 
 // 第一步：实现在浏览器里正确渲染内容，也就是传入的JS代码能跑
@@ -168,25 +167,21 @@ return hotCreaterequire("./src/index.js")("./src/index.js")
 			__webpack_require__('webpack-dev-server/client/index.js')
 			let input = document.createElement('input')
 			document.body.append(input)
-
 			let div = document.createElement('div')
 			document.body.append(div)
-
 			let render = () => {
 				let title = __webpack_require__('./src/title.js')
 				div.innerHTML = title
 			}
-			// 初始化调用render方法
 			render()
 			// 如果当前模块支持热更新
 			if(module.hot) {
-				// 注册回调 当前index.js模块可以接受title.js模块的更新，当title.js变更后重新调用render方法
 				module.hot.accept(['./src/title.js'], render)
 			}
 		},
 
 		"./src/title.js":function(module, exports, __webpack_require__){
-			module.exports = 'title121'
+			module.exports = 'HMR'
 		},
 
 

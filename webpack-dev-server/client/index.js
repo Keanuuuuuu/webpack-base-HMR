@@ -15,8 +15,6 @@ class EventEmitter {
 const hotEmitter = new EventEmitter()
 
 const socket = window.io('/')
-// 这里的window.io搭配着HTML文件中的 <script src="/socket.io/socket.io.js"></script>使用
-
 
 // 监听hash事件，保存此hash值
 socket.on('hash', (hash) => {

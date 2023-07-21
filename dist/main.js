@@ -15,7 +15,7 @@
   \**********************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("let input = document.createElement('input')\r\ndocument.body.append(input)\r\n\r\nlet div = document.createElement('div')\r\ndocument.body.append(div)\r\n\r\nlet render = () => {\r\n  let title = __webpack_require__(/*! ./title.js */ \"./src/title.js\")\r\n  div.innerHTML = title\r\n}\r\n// 初始化调用render方法\r\nrender()\r\n// 如果当前模块支持热更新\r\nif(true) {\r\n  // 注册回调 当前index.js模块可以接受title.js模块的更新，当title.js变更后重新调用render方法\r\n  module.hot.accept([/*! ./title.js */ \"./src/title.js\"], render)\r\n}\n\n//# sourceURL=webpack://webpack-base-hmr/./src/index.js?");
+eval("let input = document.createElement('input')\r\ndocument.body.append(input)\r\n\r\nlet div = document.createElement('div')\r\ndocument.body.append(div)\r\n\r\nlet render = () => {\r\n  let title = __webpack_require__(/*! ./title.js */ \"./src/title.js\")\r\n  div.innerHTML = title\r\n}\r\n// 初始化调用render方法\r\nrender()\r\n// 如果当前模块支持热更新\r\nif(true) {\r\n  // 注册回调 当title.js变更后重新调用render方法\r\n  module.hot.accept([/*! ./title.js */ \"./src/title.js\"], render)\r\n}\n\n//# sourceURL=webpack://webpack-base-hmr/./src/index.js?");
 
 /***/ }),
 
@@ -25,7 +25,7 @@ eval("let input = document.createElement('input')\r\ndocument.body.append(input)
   \**********************/
 /***/ ((module) => {
 
-eval("module.exports = 'HMR1'\n\n//# sourceURL=webpack://webpack-base-hmr/./src/title.js?");
+eval("module.exports = 'HMR1221'\n\n//# sourceURL=webpack://webpack-base-hmr/./src/title.js?");
 
 /***/ })
 
@@ -90,7 +90,7 @@ eval("module.exports = 'HMR1'\n\n//# sourceURL=webpack://webpack-base-hmr/./src/
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("1e2a4b0b2c5fa3559edb")
+/******/ 		__webpack_require__.h = () => ("5e0838f36dcbe5253f93")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */

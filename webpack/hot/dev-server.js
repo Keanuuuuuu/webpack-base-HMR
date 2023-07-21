@@ -5,7 +5,6 @@
 let lastHash
 let currentHash
 hotEmitter.on('webpackHotUpdatewebpack_base_hmr', () => {
-  console.info('hotCheck')
   if(!lastHash) { // 没有lastHash说明没上一次的编译结果，说明就是第一次渲染
     lastHash = currentHash
     console.log('lashHash',lastHash, 'currentHash', currentHash)

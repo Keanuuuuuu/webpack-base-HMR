@@ -97,10 +97,10 @@ class Server {
     }
   } 
   setupHooks() {
-    let {compiler} = this
+    let { compiler } = this
     // 监听编译完成事件，当编译完成后会调用此钩子函数
     compiler.hooks.done.tap('webpack-dev-server', (stats) => {
-      // stats是一个描述对象，里面放着打包后的结果 hash chunkHash contentHash 产生了哪些代码块，产出哪些模块
+      // stats描述对象，里面放着打包后的结果比如：hash值
       console.info('hash', stats.hash)
       this.currentHsah = stats.hash
       // 会向所有的客户端进行广播，告诉客户端已经编译成功，新的模块代码已经生成
