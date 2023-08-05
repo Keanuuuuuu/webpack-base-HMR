@@ -43,10 +43,9 @@ window.webpackHotUpdatewebpack_base_hmr = function(chunkId, moreModules) {
 
 // 第八步：hotAddUpdateChunk
 function hotAddUpdateChunk(chunkId, moreModules) {
-	for(let moduleId in moreModules) {
+	for(let moduleId in moreModules) { // ./src/title.js
 		modules[moduleId] = hotUpdate[moduleId] = moreModules[moduleId]
-		// modules是本身这个立即执行函数的参数，也就是下面那些很多的键值对，现在呢我们通过拿到的chunk里的最新代码
-		// 替换其本身的模块的代码，实现更新
+		// 替换其本身的模块的代码，为下一步实现更新
 	}
 	hotApply()
 }
@@ -159,7 +158,7 @@ return hotCreaterequire("./src/index.js")("./src/index.js")
 
 })(
 	{
-		// 按照打包后的代码中，传入两个参数
+		// 按照打包后的代码中，传入参数
 		"./src/index.js":function(module, exports, __webpack_require__){
 			// 监听webpackHotUpdate消息
 			__webpack_require__('webpack/hot/dev-server.js')
@@ -183,7 +182,6 @@ return hotCreaterequire("./src/index.js")("./src/index.js")
 		"./src/title.js":function(module, exports, __webpack_require__){
 			module.exports = 'HMR'
 		},
-
 
 		"webpack-dev-server/client/index.js": function(module, exports) {
 

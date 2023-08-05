@@ -26,5 +26,5 @@ socket.on('ok', () => {
 })
 
 function reloadApp() {
-  hotEmitter.emit('webpackHotUpdate')
+  hotEmitter.emit('webpackHotUpdatewebpack_base_hmr')
 }

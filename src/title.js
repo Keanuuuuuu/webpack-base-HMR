@@ -1,1 +1,1 @@
-module.exports = 'HMR1221'
+module.exports = 'HMR11111抵外敌'
